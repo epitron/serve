@@ -1,0 +1,35 @@
+%table{cellpadding: 3}
+  / HEADERS
+  %thead
+    %tr
+      %td
+        %a{href: sort_params("type", @sort, @order)} &nbsp;
+      %td
+        %a{href: sort_params("name", @sort, @order)} Filename
+      %td{align: "right"}
+        %a{href: sort_params("size", @sort, @order)} Size
+      %td
+        %a{href: sort_params("date", @sort, @order)} Date
+
+
+  / FILE LISTING
+  %tbody
+    - @files.each_with_index do |file,i|
+
+      %tr{class: (i % 2 == 0 ? "grey" : "")}
+        / ICON
+        %td.icon
+          %img{src: file.icon}
+
+        / NAME
+        %td{style: "min-width:100px"}
+          %a{href: file.name.urlencode}= file.name
+
+        / SIZE
+        %td{nowrap: true, align: 'right'}
+          = file.dir? ? "" : file.size.commatize
+
+        / DATE
+        %td{nowrap: true, align: 'right'}
+          = file.mtime.formatted_like_ls
+

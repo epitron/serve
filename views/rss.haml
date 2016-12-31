@@ -1,0 +1,23 @@
+!!! XML
+%rss(version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:atom="http://www.w3.org/2005/Atom")
+
+  %channel
+    %title
+      [#{settings.machine_name}]/#{@root_dir_name}/
+
+    %link #{current_url}
+    %atom:link(href="#{current_full_url}"
+               rel="self"
+               type="application/rss+xml")
+    %language en-US
+    %lastBuildDate #{@files.first.mtime.rss}
+
+    - @files.each do |file|
+      %item
+        %title #{file.basename}
+        %link  #{url_for(file.name)}
+        %pubDate #{file.mtime.rss}
+
+
