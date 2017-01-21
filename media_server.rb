@@ -109,20 +109,16 @@ class MediaServer < Sinatra::Base
     end
 
     def xsend_file(path)
-      # content_type(path.extname, default: 'application/octet-stream')
+      content_type path.extname, default: 'application/octet-stream'
       headers["X-Sendfile"] = path.to_s
-      # headers['Content-Length'] = path.size.to_s
-      # last_modified path.mtime
     end
   end
 
   ###########################################################################
 
   def send_the_file(path)
-    p sending: path
-    # require 'pry'; binding.pry
-    send_file(path.open)
     # xsend_file(path)
+    send_file(path.open)
   end
 
   def flip_order(order)

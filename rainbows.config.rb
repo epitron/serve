@@ -6,14 +6,8 @@ require "io/splice"
 worker_processes 4 # assuming four CPU cores
 
 Rainbows! do
-  # use :FiberSpawn
   use :ThreadPool
-  # use :RevFiberSpawn
 
-  # use :ThreadSpawn
-  # use :EventMachine
-  # use :NeverBlock  # using EventMachine
-
-  worker_connections 100
+  worker_connections 20
   copy_stream IO::Splice
 end

@@ -1,0 +1,19 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ "$1" == "--help" ]; then
+  echo "usage:"
+  echo "  serve <directory> [host[:port]]"
+  exit
+fi
+
+if [ "$1" == "" ]; then
+  LISTEN=0.0.0.0:8888
+else
+  LISTEN=$1
+fi
+
+echo
+echo "=== Serving $PWD on $LISTEN =============="
+echo
+BUNDLE_GEMFILE=$DIR/Gemfile bundle exec rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN
