@@ -13,7 +13,14 @@ else
   LISTEN=$1
 fi
 
+if [ ! -f $DIR/Gemfile.lock ] || [ ! -d $DIR/vendor/bundle ]; then
+  pushd $PWD
+  cd $DIR && bundle --path vendor/bundle
+  popd
+fi
+
 echo
 echo "=== Serving $PWD on $LISTEN =============="
 echo
 BUNDLE_GEMFILE=$DIR/Gemfile bundle exec rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN
+# ~/.gem/bin/rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN
