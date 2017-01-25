@@ -117,13 +117,9 @@ end
 
 ###########################################################################
 
-module URI
-  class << self
-    alias_method :old_escape, :escape
-
-    def escape(s)
-      old_escape(s).gsub("[", "%5B").gsub("]", "%5D")
-    end
+class String
+  def urlencode
+    ERB::Util.url_encode(self).gsub("%2F", "/")
   end
 end
 
