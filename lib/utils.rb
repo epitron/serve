@@ -5,6 +5,13 @@ require 'pathname'
 
 class Pathname
 
+  TYPES = Rash.new(
+    /\.(avi|ogm|webm|mpv|mp4|m4v|mkv|mj?pe?g|flv|mov|wmv)$/ => "video",
+    /(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/                => "doc",
+    /\.(jpe?g|gif|png)$/                                    => "image",
+    /\.(mp3|ogg|m4a|aac|flac)$/                             => "audio",
+  )
+
   alias_method :relative_to, :relative_path_from
 
   alias_method :ls,       :children
@@ -25,12 +32,9 @@ class Pathname
     end
   end
 
-  TYPES = Rash.new(
-    /\.(avi|ogm|webm|mpv|mp4|m4v|mkv|mj?pe?g|flv|mov|wmv)$/ => "video",
-    /(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/                => "doc",
-    /\.(jpe?g|gif|png)$/                                    => "image",
-    /\.(mp3|ogg|m4a|aac|flac)$/                             => "audio",
-  )
+  def name_without_ext
+    extname.blank? ? name : name.gsub(/#{Regexp.escape extname}$/, '')
+  end
 
   def type
     dir? ? "dir" : TYPES[basename.to_s] || "file"

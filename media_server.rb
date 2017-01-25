@@ -104,8 +104,8 @@ class MediaServer < Sinatra::Base
       "#{request.base_url}#{request.path}"
     end
 
-    def url_for(relative_path)
-      "#{request.base_url}/#{"#{@fullpath}/" if @fullpath.any?}#{relative_path}"
+    def url_for(path)
+      "#{request.base_url}/#{"#{@fullpath}/" if @fullpath.any?}#{path}"
     end
 
     def xsend_file(path)
@@ -187,10 +187,18 @@ class MediaServer < Sinatra::Base
         end
     end
 
+
     #
     # Everything that's not a file
     #
-    if params[:search]
+    if params[:playlist] == "xspf"
+      @tracks = @path.each_child.select(&:audio?)
+
+      attachment("listen.xspf", "inline")
+      content_type(".xspf")
+      haml :xspf, layout: false
+
+    elsif params[:search]
       # TODO: link to directories
 
       # SEARCH
