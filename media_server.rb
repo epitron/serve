@@ -105,7 +105,7 @@ class MediaServer < Sinatra::Base
     end
 
     def url_for(path)
-      "#{request.base_url}/#{"#{@fullpath}/" if @fullpath.any?}#{path}"
+      "#{request.base_url}/#{"#{URI.escape @fullpath}/" if @fullpath.any?}#{path}"
     end
 
     def xsend_file(path)
