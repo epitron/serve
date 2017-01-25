@@ -117,6 +117,18 @@ end
 
 ###########################################################################
 
+module URI
+  class << self
+    alias_method :old_escape, :escape
+
+    def escape(s)
+      old_escape(s).gsub("[", "%5B").gsub("]", "%5D")
+    end
+  end
+end
+
+###########################################################################
+
 class Time
   def formatted_like_ls
     if year == Time.now.year
