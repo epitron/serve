@@ -1,9 +1,11 @@
-- if (@files.select(&:audio?).count / @files.size.to_f) > 0.5
+- musiciness = (@files.select(&:audio?).count / @files.size.to_f)
+
+- if musiciness > 0.5
   %p
     [
     %a{href: "?playlist=xspf"} Stream these songs as an XSPF Playlist
     ]
-    
+
 %table{cellpadding: 3}
   / HEADERS
   %thead

@@ -193,6 +193,7 @@ class MediaServer < Sinatra::Base
     # Everything that's not a file
     #
     if params[:playlist] == "xspf"
+      # PLAY DIRECTORY AS XSPF PLAYLIST
       @tracks = @path.each_child.select(&:audio?)
 
       attachment("listen.xspf", "inline")
@@ -200,9 +201,9 @@ class MediaServer < Sinatra::Base
       haml :xspf, layout: false
 
     elsif params[:search]
-      # TODO: link to directories
-
       # SEARCH
+
+      # TODO: link to parent directories
 
       if params[:throbber]
         @redirect = "/#{path}?search=#{params[:search]}"
@@ -238,7 +239,7 @@ class MediaServer < Sinatra::Base
       haml :search
 
     elsif feedtype = params[:rss]
-      # RSS
+      # RSS FEED
 
       @files = @path.children_sorted_by("date")
 
@@ -257,7 +258,7 @@ class MediaServer < Sinatra::Base
       # application/atom+xml
       haml :rss, layout: false
     else
-      # FILES
+      # REGULAR HTML VIEW OF DIRECTORY
 
       @sort  = params[:sort] || "name"
       @files = @path.children_sorted_by(@sort)
