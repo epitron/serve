@@ -14,6 +14,14 @@ var init = function() {
     xhr.send()
   }
 
+  function keyboard_handler(event) {
+    if (event.keyCode == 38 && event.altKey) {
+      document.querySelector("a.up").click()
+      event.preventDefault()
+    }
+  }
+  document.addEventListener("keydown", keyboard_handler)
+
   document.querySelectorAll(".icon").forEach(function(td) {
     var e = td.children[0]
 
