@@ -1,10 +1,19 @@
 - musiciness = (@files.select(&:audio?).count / @files.size.to_f)
+- videousity = (@files.select(&:video?).count / @files.size.to_f)
 
 - if musiciness > 0.5
   %p
     [
-    %a{href: "?playlist=xspf"} Stream these songs as an XSPF Playlist
+    %a{href: "?playlist=audio-xspf"} Stream these songs as an XSPF Playlist
     ]
+
+- if videousity > 0.5
+  %p
+    [
+    / %a{href: "?playlist=video-m3u"} Stream these videos as an M3U Playlist
+    %a{href: "?playlist=video-pls"} Stream these videos as an PLS Playlist
+    ]
+
 
 %table{cellpadding: 3}
   / HEADERS
