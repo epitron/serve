@@ -1,4 +1,4 @@
-- musiciness = (@files.select(&:audio?).count / @files.size.to_f)
+- musiciness = (@files.select(&:audio?).size / @files.size.to_f)
 
 - if musiciness > 0.5
   %p

@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    epitools (0.5.99)
+    epitools (0.5.100)
     haml (4.0.7)
       tilt
     io_splice (4.4.0)
