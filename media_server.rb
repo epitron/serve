@@ -192,13 +192,41 @@ class MediaServer < Sinatra::Base
     #
     # Everything that's not a file
     #
-    if params[:playlist] == "xspf"
+    if params[:playlist] == "audio-xspf"
       # PLAY DIRECTORY AS XSPF PLAYLIST
       @tracks = @path.each_child.select(&:audio?)
 
       attachment("listen.xspf", "inline")
       content_type(".xspf")
-      haml :xspf, layout: false
+      haml "audio-xspf", layout: false
+
+    elsif params[:playlist] == "video-m3u"
+
+      attachment("watch.m3u", "inline")
+      content_type(".m3u")
+
+      @path.each_child.select(&:video?).map do |path|
+        url_for(path.basename.to_s.urlencode)
+      end.join("\n")
+
+    elsif params[:playlist] == "video-pls"
+
+      attachment("watch.pls", "inline")
+      content_type(".pls")
+
+      out = []
+      out << "[playlist]"
+
+      @vidz = @path.each_child.select(&:video?)
+
+      @vidz.each_with_index do |path, n|
+        out << "Title#{n+1}=#{path.basename}"
+        out << "File#{n+1}=#{url_for(path.basename.to_s.urlencode)}"
+      end
+
+      out << "NumberOfEntries=#{@vidz.size}"
+
+      out.join("\n")
 
     elsif params[:search]
       # SEARCH
@@ -279,3 +307,4 @@ class MediaServer < Sinatra::Base
   end
 
 end
+

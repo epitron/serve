@@ -6,7 +6,8 @@
 - @grouped.each do |dir, files|
 
   %h4
-    %a{href: "/#{dir.relative_name(@path)}"}
+    %a{href: "/#{dir.relative_name(@path)}"} 
+      / ^- problemo! it's not pointing at the correct path (missing dirs[0])
       = highlight(dir.relative_name(@path), @query)
 
   %ul
