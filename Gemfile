@@ -8,5 +8,8 @@ gem 'sendfile'
 gem 'io_splice'
 
 gem "haml"
+gem "pandoc-ruby"
 
 gem "epitools"
+
+#gem 'pry'

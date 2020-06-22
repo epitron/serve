@@ -30,6 +30,7 @@ require 'erb'
 require 'epitools/core_ext'
 
 require_relative 'lib/utils'
+require_relative 'lib/moin2markdown'
 
 ###########################################################################
 
@@ -153,6 +154,9 @@ class MediaServer < Sinatra::Base
   #
   # Regular directories
   #
+
+  OPTIONAL_EXTS = %w[.haml .moin .md .html]
+
   get '/*' do |path|
     @path          = settings.root_dir / path
     @relative_path = @path.relative_to(settings.root_dir)
@@ -160,7 +164,17 @@ class MediaServer < Sinatra::Base
     @fullpath      = @relative_path.to_s
     @fullpath      = "" if @fullpath == "."
 
-    return not_found unless @path.exists?
+    if @path.exists?
+      # if @path.directory? and not path[%r{/$}]
+      #   return redirect "#{path}/"
+      # end
+    else
+      unless OPTIONAL_EXTS.any? { |ext| testpath = @path.sub_ext(ext); testpath.exist? ? @path = testpath : false }
+        return not_found
+      end
+    end
+    # require 'pry'; binding.pry
+
 
     #
     # Serve a file
@@ -170,6 +184,13 @@ class MediaServer < Sinatra::Base
         case @path.extname
         when ".haml"
           haml @path.read, layout: false
+        when ".moin"
+          haml(:"layout-markdown", layout: false) do
+            markdown(moin2markdown(@path.read))
+          end
+
+          # haml markdown(moin2markdown(@path.read)), layout: :"layout-markdown"
+          # markdown moin2markdown(@path.read), layout: :"layout-markdown"
         when ".md"
           markdown @path.read, layout: false
         when ".swf"
@@ -187,7 +208,6 @@ class MediaServer < Sinatra::Base
           end
         end
     end
-
 
     #
     # Everything that's not a file
@@ -238,11 +258,9 @@ class MediaServer < Sinatra::Base
         return haml :throbber
       end
 
-
       # Turn query into a regexp
       union = Regexp.union params[:search].split
       @query = /#{union.source}/i
-
 
       # @matches = @path.find.select(&:exist?).map do |file|
       #   begin
@@ -252,12 +270,14 @@ class MediaServer < Sinatra::Base
       #   end
       # end.compact
 
-      # Search directory tree for files
+      ## Search directory tree for files
       # @matches = @path.find.select(&:exist?).map do |file|
       @matches = Dir["#{@path}/**/*"].select { |file| file =~ @query rescue nil }.map do |file|
         file = Pathname.new(file)
         next unless file.exists?
         rel = file.relative_to(@path)
+        # @path = unless @path.to_path[%r{/$}]
+        # puts(rel: rel, file: file, path: @path)
         file if rel.to_s =~ @query
       end.compact
 
@@ -285,11 +305,12 @@ class MediaServer < Sinatra::Base
       content_type :atom
       # application/atom+xml
       haml :rss, layout: false
+
     else
-      # REGULAR HTML VIEW OF DIRECTORY
+      # DIRECTORY INDEX
 
       @sort  = params[:sort] || "name"
-      @files = @path.children_sorted_by(@sort)
+      @files = @path.children_sorted_by(@sort).reject {|path| path.basename.to_s[/^\./] }
 
       if @order = params[:order]
         @files.reverse! if @order == "reversed"
@@ -299,6 +320,7 @@ class MediaServer < Sinatra::Base
 
       haml :files
     end
+
   end
 
 
