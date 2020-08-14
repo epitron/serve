@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+$: << "#{__dir__}/lib"
+require 'core_ext'
+require 'epitools/colored'
+
+args = ARGV
+
+puts "* Thumbnailing #{args.size} things..."
+
+args.each do |arg|
+  path = Pathname.new(arg)
+  if path.exists?
+    if path.thumbnail.exists?
+      puts "  [-] #{path} (Skipping!)"
+    else
+      path.thumbnail!
+      puts "  [*] #{path}"
+    end
+  end
+end

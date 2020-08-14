@@ -1,5 +1,4 @@
 require_relative 'media_server'
-
 # # Lint remover
 # module Rack
 #   class Lint
@@ -16,5 +15,8 @@ require_relative 'media_server'
 use Rainbows::Sendfile
 # use Rack::Reloader, 0
 # use Rack::ContentLength
+
+require_relative 'lib/memprinter'
+use MemPrinter
 
 run MediaServer

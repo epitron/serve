@@ -22,6 +22,8 @@
 #   ENV["RACK_ENV"] = "production"
 # end
 
+$:.unshift "#{__dir__}/lib"
+
 require 'sinatra'
 require 'haml'
 require 'socket'
@@ -29,8 +31,11 @@ require 'erb'
 
 require 'epitools/core_ext'
 
-require_relative 'lib/utils'
-require_relative 'lib/moin2markdown'
+require 'core_ext/string'
+require 'core_ext/time'
+require 'core_ext/pathname'
+
+require 'moin2markdown'
 
 ###########################################################################
 
@@ -72,12 +77,13 @@ class MediaServer < Sinatra::Base
   # set :bind, host
   # set :port, port
 
-  set :assets,     Pathname.new(__FILE__).expand_path.dirname / "assets"
+  set :assets,     Pathname.new(__FILE__).expand_path.dirname / "public"
   set :root_dir,   Pathname.new(public_dir).expand_path
   # set :public_folder, nil
 
   mime_type :mkv, 'video/x-matroska'
-  disable :sessions
+  mime_type :nfo, 'text/plain; charset=IBM437'
+  # disable :sessions
 
   # puts %q{
   #  ____                  _                                  _ _
@@ -118,8 +124,25 @@ class MediaServer < Sinatra::Base
 
   ###########################################################################
 
+  def heap_size
+    # size     total program size (pages)            (same as VmSize in status)
+    # resident size of memory portions (pages)       (same as VmRSS in status)
+    # shared   number of pages that are shared       (i.e. backed by a file, same
+    #                                           as RssFile+RssShmem in status)
+    # trs      number of pages that are 'code'       (not including libs; broken,
+    #                                           includes data segment)
+    # lrs      number of pages of library            (always 0 on 2.6)
+    # drs      number of pages of data/stack         (including libs; broken,
+    #                                           includes library text)
+    # dt       number of dirty pages                 (always 0 on 2.6)
+
+    size, resident, shared, trs, lrs, drs, dt = File.read("/proc/#{$$}/statm").split.map(&:to_i)
+    resident
+  end
+
   def send_the_file(path)
     # xsend_file(path)
+    puts "[sending] #{path}"
     send_file(path.open)
   end
 
@@ -164,11 +187,10 @@ class MediaServer < Sinatra::Base
     @fullpath      = @relative_path.to_s
     @fullpath      = "" if @fullpath == "."
 
-    if @path.exists?
-      # if @path.directory? and not path[%r{/$}]
-      #   return redirect "#{path}/"
-      # end
-    else
+    # puts "[requested] #{@path}"
+    puts "[requested] #{request.fullpath}"
+
+    unless @path.exists?
       unless OPTIONAL_EXTS.any? { |ext| testpath = @path.sub_ext(ext); testpath.exist? ? @path = testpath : false }
         return not_found
       end
@@ -192,7 +214,10 @@ class MediaServer < Sinatra::Base
           # haml markdown(moin2markdown(@path.read)), layout: :"layout-markdown"
           # markdown moin2markdown(@path.read), layout: :"layout-markdown"
         when ".md"
-          markdown @path.read, layout: false
+          haml(:"layout-markdown", layout: false) do
+            markdown(@path.read)
+          end
+          # markdown @path.read, layout: false
         when ".swf"
           if params[:file]
             send_the_file @path
@@ -204,7 +229,13 @@ class MediaServer < Sinatra::Base
           when "metadata", "application/metadata+json"
             @path.getxattrs.to_json
           else
-            send_the_file @path
+            if params[:thumbnail]
+              @path.thumbnail! unless @path.thumbnail.exists?
+              content_type(".png")
+              send_the_file @path.thumbnail
+            else
+              send_the_file @path
+            end
           end
         end
     end
@@ -308,17 +339,23 @@ class MediaServer < Sinatra::Base
 
     else
       # DIRECTORY INDEX
+      return redirect "#{current_url}/" unless current_url[%r{/$}]
 
-      @sort  = params[:sort] || "name"
-      @files = @path.children_sorted_by(@sort).reject {|path| path.basename.to_s[/^\./] }
-
-      if @order = params[:order]
-        @files.reverse! if @order == "reversed"
+      if params[:thumbnail]
+        content_type(".gif")
+        send_the_file settings.assets/"img/dir.gif"
       else
-        @order = "forwards"
-      end
+        @sort  = params[:sort] || "name"
+        @files = @path.children_sorted_by(@sort).reject {|path| path.basename.to_s[/^\./] or path.extname == ".srt" }
 
-      haml :files
+        if @order = params[:order]
+          @files.reverse! if @order == "reversed"
+        else
+          @order = "forwards"
+        end
+
+        haml :files
+      end
     end
 
   end

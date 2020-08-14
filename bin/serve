@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 help() {
   echo "usage:"
@@ -13,7 +13,7 @@ MEDIA="$PWD"
 LISTEN="0.0.0.0:8888"
 
 case $# in
-  1) 
+  1)
     if [ -d "$1" ]; then
       MEDIA="$1"
     else
@@ -39,5 +39,5 @@ echo
 echo "=== Serving $MEDIA on $LISTEN =============="
 echo
 
-cd $MEDIA
+cd "$MEDIA"
 BUNDLE_GEMFILE=$DIR/Gemfile bundle exec rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN

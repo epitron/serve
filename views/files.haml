@@ -1,52 +1,74 @@
-- musiciness = (@files.select(&:audio?).size / @files.size.to_f)
-- videousity = (@files.select(&:video?).size / @files.size.to_f)
+-#
+  - musiciness = (@files.select(&:audio?).size / @files.size.to_f)
+  - videousity = (@files.select(&:video?).size / @files.size.to_f)
 
-- if musiciness > 0.5
-  %p
-    [
-    %a{href: "?playlist=audio-xspf"} Stream these songs as an XSPF Playlist
-    ]
+-#
+  - if musiciness > 0.5
+    %p
+      [
+      %a{href: "?playlist=audio-xspf"} Stream these songs as an XSPF Playlist
+      ]
 
-- if videousity > 0.5
-  %p
-    [
-    / %a{href: "?playlist=video-m3u"} Stream these videos as an M3U Playlist
-    %a{href: "?playlist=video-pls"} Stream these videos as an PLS Playlist
-    ]
+-#
+  - if videousity > 0.5
+    %p
+      [
+      / %a{href: "?playlist=video-m3u"} Stream these videos as an M3U Playlist
+      %a{href: "?playlist=video-pls"} Stream these videos as an PLS Playlist
+      ]
+
+- if params[:view] == "thumbs"
+  / thumbnail view
+
+  %div
+    %a{href: "?view=details"} detail view
+
+  .thumbnails
+    - @files.each do |file|
+      .thumb
+        %a{href: file.name.urlencode}
+          %img{src: "#{file.name.urlencode}?thumbnail=true"}
+          %br
+          = file.name
 
 
-%table{cellpadding: 3}
-  / HEADERS
-  %thead
-    %tr
-      %th
-        %a{href: sort_params("type", @sort, @order)} &nbsp;
-      %th
-        %a{href: sort_params("name", @sort, @order)} Filename
-      %th{align: "right"}
-        %a{href: sort_params("size", @sort, @order)} Size
-      %th
-        %a{href: sort_params("date", @sort, @order)} Date
+- else
+  / detail view
+
+  %a{href: "?view=thumbs"} thumbnail view
+
+  %table{cellpadding: 3}
+    / HEADERS
+    %thead
+      %tr
+        %th
+          %a{href: sort_params("type", @sort, @order)} &nbsp;
+        %th
+          %a{href: sort_params("name", @sort, @order)} Filename
+        %th{align: "right"}
+          %a{href: sort_params("size", @sort, @order)} Size
+        %th
+          %a{href: sort_params("date", @sort, @order)} Date
 
 
-  / FILE LISTING
-  %tbody
-    - @files.each_with_index do |file,i|
+    / FILE LISTING
+    %tbody
+      - @files.each_with_index do |file,i|
 
-      %tr{class: (i % 2 == 0 ? "grey" : "")}
-        / ICON
-        %td.icon
-          %img{src: file.icon}
+        %tr{class: (i % 2 == 0 ? "grey" : "")}
+          / ICON
+          %td.icon
+            %img{src: file.icon}
 
-        / NAME
-        %td{style: "min-width:100px"}
-          %a{href: file.name.urlencode}= file.name
+          / NAME
+          %td{style: "min-width:100px"}
+            %a{href: file.name.urlencode}= file.name
 
-        / SIZE
-        %td{nowrap: true, align: 'right'}
-          = file.dir? ? "" : file.size.commatize
+          / SIZE
+          %td{nowrap: true, align: 'right'}
+            = file.dir? ? "" : file.size.commatize
 
-        / DATE
-        %td{nowrap: true, align: 'right'}
-          = file.mtime.formatted_like_ls
+          / DATE
+          %td{nowrap: true, align: 'right'}
+            = file.mtime.formatted_like_ls
 

@@ -19,10 +19,11 @@
         \/
         %a{href: "/#{fn}/"}= fn.basename
 
-    #rss
-      - %w[video audio doc].each do |type|
-        %a{href: "?rss=#{type}"}
-          %img{src: "/img/#{type}.gif"}
+    -#
+      #rss
+        - %w[video audio doc].each do |type|
+          %a{href: "?rss=#{type}"}
+            %img{src: "/img/#{type}.gif"}
 
     %form#search
       %input{name: "search", placeholder: "Search", value: params[:search]}

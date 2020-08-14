@@ -1,16 +1,29 @@
 require 'epitools/rash'
 require 'pathname'
+require 'digest/md5'
 
 ###########################################################################
 
 class Pathname
 
-  TYPES = Rash.new(
-    /\.(avi|ogm|webm|mpv|mp4|m4v|mkv|mj?pe?g|flv|mov|wmv)$/ => "video",
-    /(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/                => "doc",
-    /\.(jpe?g|gif|png)$/                                    => "image",
-    /\.(mp3|ogg|m4a|aac|flac)$/                             => "audio",
-  )
+  TYPES = [
+    [/\.(avi|ogm|webm|mp4|m4v|mkv|mj?pe?g|flv|f4v|mov|wmv|asf)$/i, "video"],
+    [/(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/i               , "doc"],
+    [/\.(jpe?g|gif|png|webp)$/i                              , "image"],
+    [/\.(mp3|ogg|m4a|aac|flac)$/i                            , "audio"],
+  ]
+  # TYPES = Rash.new(
+  #   /\.(avi|ogm|webm|mp4|m4v|mkv|mj?pe?g|flv|f4v|mov|wmv)$/i => "video",
+  #   /(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/i                => "doc",
+  #   /\.(jpe?g|gif|png|webp)$/i                               => "image",
+  #   /\.(mp3|ogg|m4a|aac|flac)$/i                             => "audio",
+  # )
+
+  def file_type
+    return "directory" if directory?
+    result = TYPES.find { |re, t| re.match(to_s) }
+    result && result.last
+  end
 
   alias_method :relative_to, :relative_path_from
 
@@ -37,7 +50,7 @@ class Pathname
   end
 
   def type
-    dir? ? "dir" : TYPES[basename.to_s] || "file"
+    dir? ? "dir" : basename.file_type || "file"
   end
 
   def video?; type == "video"; end
@@ -113,31 +126,46 @@ class Pathname
     attrs
   end
 
-end
-
-###########################################################################
-
-class String
-  def urlencode
-    ERB::Util.url_encode(self).gsub("%2F", "/")
+  def local_uri
+    # RFC2396
+    "file://#{expand_path}".gsub(" ", "%20")
   end
-end
 
-###########################################################################
+  THUMBDIR = Pathname.new("~/.cache/thumbnails/large/").expand_path
 
-class Time
-  def formatted_like_ls
-    if year == Time.now.year
-      fmt = "%b %d %H:%M"
+  def thumbnail
+    hash = Digest::MD5.hexdigest(local_uri)
+    (THUMBDIR/"#{hash}.png").expand_path
+  end
+
+  def thumbnail!(overwrite=false)
+    return true if thumbnail.exists? and not overwrite
+
+    case file_type
+    when "video", "image"
+      cmd = [
+          "ffmpeg",
+          # "-loglevel", "quiet",
+          # "-noaccurate_seek",
+          # "-ss", "40",
+
+          "-i", to_path,
+
+          "-frames:v", "1",
+          "-an",
+
+          # "-vf", "thumbnail,scale=256:-1,crop=256:256",
+          "-vf", "thumbnail,scale=256:256:force_original_aspect_ratio=increase,crop=256:256",
+          # "-vf", "scale=256:-1",
+
+          "-y", thumbnail.to_path,
+      ]
+      system(*cmd)
     else
-      fmt = "%b %d %Y"
+      false
     end
-
-    strftime(fmt)
   end
 
-  def rfc822
-    strftime("%a, %-d %b %Y %T %z")
-  end
-  alias_method :rss, :rfc822
 end
+
+###########################################################################

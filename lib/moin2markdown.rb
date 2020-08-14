@@ -40,7 +40,7 @@ def moin2markdown(moin)
     gsub(/'''/, "__").                            # bolds
     gsub(/''/, "_").                              # italics
     gsub(/\{\{(?:attachment:)?(.+)\}\}/, "![](/_attachments/\\1)").  # images
-    gsub(/\[\[(.+)\|(.+)\]\]/, "[\\2](\\1)").     # links w/ desc
+    gsub(/\[\[(.+?)\|(.+?)\]\]/, "[\\2](\\1)").     # links w/ desc
     gsub(/\[\[(.+)\]\]/, "[\\1](\\1)").           # links w/o desc
     gsub(/^#acl .+$/, '').                        # remove ACLs
     gsub(/^<<TableOfContents.+$/, '').            # remove TOCs
