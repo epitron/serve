@@ -28,6 +28,7 @@ require 'sinatra'
 require 'haml'
 require 'socket'
 require 'erb'
+require 'epub/parser'
 
 require 'epitools/core_ext'
 
@@ -206,6 +207,7 @@ class MediaServer < Sinatra::Base
         case @path.extname
         when ".haml"
           haml @path.read, layout: false
+
         when ".moin"
           haml(:"layout-markdown", layout: false) do
             markdown(moin2markdown(@path.read))
@@ -213,17 +215,34 @@ class MediaServer < Sinatra::Base
 
           # haml markdown(moin2markdown(@path.read)), layout: :"layout-markdown"
           # markdown moin2markdown(@path.read), layout: :"layout-markdown"
+
         when ".md"
           haml(:"layout-markdown", layout: false) do
             markdown(@path.read)
           end
           # markdown @path.read, layout: false
+
+        when ".epub"
+          # TODO: Only render <body> of each page
+          # TODO: make the ToC work (options: 1. rewrite the ToC so hrefs become #hashes and there's a <a name> before each chapter, or 2. only render one chapter at a time chapter, linked from ToC, and put a next>> at the end of each chapter)
+          epub = EPUB::Parser.parse(@path)
+
+          # haml(:"layout-markdown", layout: false) do
+            Enumerator.new do |out|
+              epub.each_page_on_spine do |page|
+                out << page.read
+                out << "<br>"
+              end
+            end
+          # end
+
         when ".swf"
           if params[:file]
             send_the_file @path
           else
             haml :swf, layout: false
           end
+
         else
           case request.env["HTTP_ACCEPT"]
           when "metadata", "application/metadata+json"

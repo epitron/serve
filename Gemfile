@@ -9,6 +9,7 @@ gem 'io_splice'
 
 gem "haml"
 gem "pandoc-ruby"
+gem "epub-parser"
 
 gem "epitools"
 
