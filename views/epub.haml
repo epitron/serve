@@ -1,0 +1,33 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
+    %meta{:name => "viewport", :content => "width=device-width, initial-scale=1"}
+    %title
+      [#{settings.machine_name}]
+      #{@root_dir_name} / #{@fullpath}
+
+    %link{href: "/css/main.css", rel: "stylesheet", type: "text/css"}
+    :css
+      .book { color: #C8D8B9; margin-left: 5%; margin-right: 5%; }
+
+
+  %body
+    %h2
+      [#{settings.machine_name}]
+      %a{href: "/"} #{@root_dir_name}
+      - @relative_path.descend do |fn|
+        - next if fn.to_s == "."
+        \/
+        %a{href: "/#{fn}/"}= fn.basename
+
+    %form#search
+      %input{name: "search", placeholder: "Search", value: params[:search]}
+      %input{type: "hidden", name: "throbber", value: "true"}
+      / %input{type: "submit"}
+
+    .book
+      - @epub.each_page_on_spine do |page|
+        = page.read
+        %br
+

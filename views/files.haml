@@ -25,6 +25,7 @@
 
   .thumbnails
     - @files.each do |file|
+      - next if %w[.vtt .srt .sub .nfo].include? file.extname
       .thumb
         %a{href: file.name.urlencode}
           %img{src: "#{file.name.urlencode}?thumbnail=true"}

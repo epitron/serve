@@ -7,7 +7,7 @@ require 'digest/md5'
 class Pathname
 
   TYPES = [
-    [/\.(avi|ogm|webm|mp4|m4v|mkv|mj?pe?g|flv|f4v|mov|wmv|asf)$/i, "video"],
+    [/\.(avi|ogm|webm|mp4|m4v|mkv|mj?pe?g|flv|f4v|mov|wmv|asf|vob)$/i, "video"],
     [/(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/i               , "doc"],
     [/\.(jpe?g|gif|png|webp)$/i                              , "image"],
     [/\.(mp3|ogg|m4a|aac|flac)$/i                            , "audio"],

@@ -217,24 +217,20 @@ class MediaServer < Sinatra::Base
           # markdown moin2markdown(@path.read), layout: :"layout-markdown"
 
         when ".md"
-          haml(:"layout-markdown", layout: false) do
-            markdown(@path.read)
-          end
-          # markdown @path.read, layout: false
+          haml :markdown, layout: false
 
         when ".epub"
           # TODO: Only render <body> of each page
-          # TODO: make the ToC work (options: 1. rewrite the ToC so hrefs become #hashes and there's a <a name> before each chapter, or 2. only render one chapter at a time chapter, linked from ToC, and put a next>> at the end of each chapter)
-          epub = EPUB::Parser.parse(@path)
-
-          # haml(:"layout-markdown", layout: false) do
-            Enumerator.new do |out|
-              epub.each_page_on_spine do |page|
-                out << page.read
-                out << "<br>"
-              end
-            end
-          # end
+          # TODO: images (?image=path)
+          # TODO: make a method to lookup URIs in the @epub
+          # TODO: make the ToC work
+          #      (options:
+          #         1. rewrite the ToC so hrefs become #hashes and there's a <a name> before each chapter
+          #         2. only render one chapter at a time, linked from ToC, and put a next>> at the end of each chapter (?chapter=n)
+          #         3. ToC sidebar)
+          # TODO: rewrite EPUB::Parser so it's dead simple (epub.toc, epub.chapter(n), epub.page(n), epub.get(uri/path), epub.css)
+          @epub = EPUB::Parser.parse(@path)
+          haml :epub, layout: false
 
         when ".swf"
           if params[:file]
