@@ -40,4 +40,5 @@ echo "=== Serving $MEDIA on $LISTEN =============="
 echo
 
 cd "$MEDIA"
-BUNDLE_GEMFILE=$DIR/Gemfile bundle exec rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN
+# BUNDLE_GEMFILE=$DIR/Gemfile bundle exec rainbows -c $DIR/rainbows.config.rb $DIR/config.ru -l $LISTEN
+BUNDLE_GEMFILE=$DIR/Gemfile bundle exec falcon serve -c $DIR/config.ru -b http://$LISTEN

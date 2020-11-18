@@ -73,3 +73,14 @@
           %td{nowrap: true, align: 'right'}
             = file.mtime.formatted_like_ls
 
+      / IPFS special dir
+      - if @relative_path.to_path == "."
+        %tr
+          %td.icon
+            i
+          %td
+            %a{href: "/ipfs/"} ipfs
+          %td
+          %td
+
+

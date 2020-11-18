@@ -1,4 +1,6 @@
+#!/usr/bin/env falcon --verbose serve -c
 require_relative 'media_server'
+
 # # Lint remover
 # module Rack
 #   class Lint
@@ -12,11 +14,11 @@ require_relative 'media_server'
 # use Rack::CommonLogger, Logger.new('access.log')
 
 
-use Rainbows::Sendfile
+# use Rainbows::Sendfile
 # use Rack::Reloader, 0
 # use Rack::ContentLength
 
-require_relative 'lib/memprinter'
-use MemPrinter
+#require_relative 'lib/memprinter'
+#use MemPrinter
 
 run MediaServer

@@ -27,7 +27,7 @@
       / %input{type: "submit"}
 
     .book
-      - @epub.each_page_on_spine do |page|
-        = page.read
+      - @epub.each_page do |page|
+        = page
         %br
 

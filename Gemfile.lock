@@ -3,46 +3,96 @@ GEM
   specs:
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    ansi (1.5.0)
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
-    epitools (0.5.126)
+    ast (2.4.1)
+    async (1.26.2)
+      console (~> 1.0)
+      nio4r (~> 2.3)
+      timers (~> 4.1)
+    async-container (0.16.8)
+      async (~> 1.0)
+      async-io (~> 1.26)
+    async-http (0.52.5)
+      async (~> 1.25)
+      async-io (~> 1.28)
+      async-pool (~> 0.2)
+      protocol-http (~> 0.20.0)
+      protocol-http1 (~> 0.13.0)
+      protocol-http2 (~> 0.14.0)
+    async-http-cache (0.2.0)
+      async-http (~> 0.51)
+    async-io (1.30.1)
+      async (~> 1.14)
+    async-pool (0.3.2)
+      async (~> 1.25)
+    build-environment (1.13.0)
+    console (1.9.0)
+    epitools (0.5.129)
     epub-cfi (0.1.2)
     epub-parser (0.4.5)
       addressable (>= 2.3.5)
       archive-zip
       epub-cfi
       rchardet (>= 1.6.1)
+    falcon (0.36.6)
+      async (~> 1.13)
+      async-container (~> 0.16.0)
+      async-http (~> 0.52.0)
+      async-http-cache (~> 0.2.0)
+      async-io (~> 1.22)
+      build-environment (~> 1.13)
+      bundler
+      localhost (~> 1.1)
+      process-metrics (~> 0.2.0)
+      rack (>= 1.0)
+      samovar (~> 2.1)
     haml (5.1.2)
       temple (>= 0.8.0)
       tilt
     io-like (0.3.1)
     io_splice (4.4.2)
-    kgio (2.11.3)
+    localhost (1.1.6)
+    mapping (1.1.1)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
+    nio4r (2.5.4)
+    oga (3.3)
+      ast
+      ruby-ll (~> 2.1)
     pandoc-ruby (2.1.4)
-    public_suffix (4.0.5)
+    process-metrics (0.2.1)
+      console (~> 1.8)
+      samovar (~> 2.1)
+    protocol-hpack (1.4.2)
+    protocol-http (0.20.1)
+    protocol-http1 (0.13.1)
+      protocol-http (~> 0.19)
+    protocol-http2 (0.14.1)
+      protocol-hpack (~> 1.4)
+      protocol-http (~> 0.18)
+    public_suffix (4.0.6)
     rack (2.2.3)
-    rack-protection (2.0.8.1)
+    rack-protection (2.1.0)
       rack
-    rainbows (5.2.1)
-      kgio (~> 2.5)
-      rack (>= 1.1, < 3.0)
-      unicorn (~> 5.1)
-    raindrops (0.19.1)
     rchardet (1.8.0)
+    ruby-ll (2.1.2)
+      ansi
+      ast
     ruby2_keywords (0.0.2)
+    samovar (2.1.4)
+      console (~> 1.0)
+      mapping (~> 1.0)
     sendfile (1.2.2)
-    sinatra (2.0.8.1)
+    sinatra (2.1.0)
       mustermann (~> 1.0)
-      rack (~> 2.0)
-      rack-protection (= 2.0.8.1)
+      rack (~> 2.2)
+      rack-protection (= 2.1.0)
       tilt (~> 2.0)
     temple (0.8.2)
     tilt (2.0.10)
-    unicorn (5.6.0)
-      kgio (~> 2.6)
-      raindrops (~> 0.7)
+    timers (4.3.2)
 
 PLATFORMS
   ruby
@@ -50,11 +100,12 @@ PLATFORMS
 DEPENDENCIES
   epitools
   epub-parser
+  falcon
   haml
   io_splice
+  oga
   pandoc-ruby
   rack
-  rainbows
   sendfile
   sinatra (>= 2.0.0.beta2)
 

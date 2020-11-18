@@ -28,7 +28,6 @@ require 'sinatra'
 require 'haml'
 require 'socket'
 require 'erb'
-require 'epub/parser'
 
 require 'epitools/core_ext'
 
@@ -37,6 +36,7 @@ require 'core_ext/time'
 require 'core_ext/pathname'
 
 require 'moin2markdown'
+require 'epub_loader'
 
 ###########################################################################
 
@@ -181,6 +181,49 @@ class MediaServer < Sinatra::Base
 
   OPTIONAL_EXTS = %w[.haml .moin .md .html]
 
+  get '/ipfs' do
+    redirect "/ipfs/"
+  end
+
+  get '/ipfs/' do
+    pins = `ipfs pin ls --type=recursive`.each_line.map { |line| line.split.first }.sort
+
+    Enumerator.new do |out|
+
+      out << "<title>IPFS Pins</title>"
+      out << "<h1>IPFS Pins</h1>"
+
+      out << "<ul>"
+
+      pins.each do |pin|
+        html = IO.popen(["ipfs", "cat", "#{pin}/index.html"], &:read)
+        if html =~ %r{<title>(.+)</title>}
+          title = $1
+        else
+          next
+        end
+        out << "<li><a href='/ipfs/#{pin}/'>#{title}</a></li>"
+      end
+
+      out << "</ul>"
+
+    end
+  end
+
+  get '/ipfs/*' do |path|
+    ipfs_id, file = path.split("/", 2)
+
+    if file.nil? or file.empty?
+      return redirect "/ipfs/#{ipfs_id}/" unless path[%r{/$}]
+      file = "index.html"
+    end
+
+    ext = File.extname(file)
+
+    content_type(ext.blank? ? "application/octet-stream" : ext)
+    IO.popen(["ipfs", "cat", "#{ipfs_id}/#{file}"], &:read)
+  end
+
   get '/*' do |path|
     @path          = settings.root_dir / path
     @relative_path = @path.relative_to(settings.root_dir)
@@ -229,8 +272,18 @@ class MediaServer < Sinatra::Base
           #         2. only render one chapter at a time, linked from ToC, and put a next>> at the end of each chapter (?chapter=n)
           #         3. ToC sidebar)
           # TODO: rewrite EPUB::Parser so it's dead simple (epub.toc, epub.chapter(n), epub.page(n), epub.get(uri/path), epub.css)
-          @epub = EPUB::Parser.parse(@path)
-          haml :epub, layout: false
+          @epub = EPUBLoader.new(@path)
+
+          if filename = params[:file]
+            if file = @epub.file(filename)
+              content_type(file.media_type)
+              file.read
+            else
+              "#{filename.inspect} not found"
+            end
+          else
+            haml :epub, layout: false
+          end
 
         when ".swf"
           if params[:file]
@@ -361,7 +414,7 @@ class MediaServer < Sinatra::Base
         send_the_file settings.assets/"img/dir.gif"
       else
         @sort  = params[:sort] || "name"
-        @files = @path.children_sorted_by(@sort).reject {|path| path.basename.to_s[/^\./] or path.extname == ".srt" }
+        @files = @path.children_sorted_by(@sort).reject { |path| path.basename.to_s[/^\./] or path.extname == ".srt" }
 
         if @order = params[:order]
           @files.reverse! if @order == "reversed"
