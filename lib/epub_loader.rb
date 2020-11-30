@@ -1,5 +1,6 @@
 require 'epub/parser'
 require 'oga'
+require 'cgi'
 
 class EPUBLoader
 
@@ -25,49 +26,68 @@ class EPUBLoader
     epub.manifest.items.find { |item| item.href.to_s == path }
   end
 
+  def cleanup_html(page)
+    doc  = Oga.parse_html(page.read)
+    body = doc.at_css("body")
+
+    # convert chapter links into intra-page anchors
+    body.css("a").each do |link|
+      p link if $debug_mode
+      if href = link["href"]
+        next if href[%r{^https?://}]
+
+        if href =~ /^.*(#.+)$/
+          link["href"] = $1
+        else
+          link["href"] = '#' + anchorify(join_paths(page.href, href))
+        end
+      end
+    end
+
+    # rewrite image links
+    body.css("img").each do |img|
+      img['src'] = "?file=#{join_paths page.href, img['src']}"
+    end
+
+    # rewrite svg image links
+    body.css("image").each do |image|
+      image["xlink:href"] = "?file=#{join_paths page.href, image['xlink:href']}"
+    end
+
+    page_html = body.to_xml.sub(%r{\A<body[^>]*>}, '').sub(%r{</\s*body[^>]*>\z}, '')
+
+    result = <<~HTML
+      <page>
+        <a name='#{anchorify(page.href)}'></a>
+        #{page_html}
+      </page>
+
+    HTML
+
+    result
+  end
+
   def each_page
+    return to_enum(:each_page) unless block_given?
+
     epub.each_page_on_spine do |page|
       p page.href if $debug_mode
 
-      doc  = Oga.parse_html(page.read)
-      body = doc.at_css("body")
+      result = begin
+        cleanup_html(page)
+      rescue => e
+        <<~HTML
+          <page>
+            <p>EPUB Parse Error:</p>
+            <pre>
+              #{CGI.escapeHTML e.inspect}
+              #{CGI.escapeHTML page.inspect}
+            </pre>
+          </page>
 
-      # convert chapter links into intra-page anchors
-      body.css("a").each do |link|
-        p link if $debug_mode
-        if href = link["href"]
-          next if href[%r{^https?://}]
-
-          if href =~ /^.*(#.+)$/
-            link["href"] = $1
-          else
-            link["href"] = '#' + anchorify(join_paths(page.href, href))
-          end
-        end
+        HTML
       end
 
-      # rewrite image links
-      body.css("img").each do |img|
-        img['src'] = "?file=#{join_paths page.href, img['src']}"
-      end
-
-      # rewrite svg image links
-      body.css("image").each do |image|
-        image["xlink:href"] = "?file=#{join_paths page.href, image['xlink:href']}"
-      end
-
-      page_html = body.to_xml.sub(%r{\A<body[^>]*>}, '').sub(%r{</\s*body[^>]*>\z}, '')
-
-      result = <<~HTML
-        <page>
-          <a name='#{anchorify(page.href)}'></a>
-          #{page_html}
-        </page>
-
-      HTML
-
-      # puts result
-      # binding.pry
       yield result
     end
   end
