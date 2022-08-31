@@ -5,5 +5,9 @@ class String
     @@parser.escape(self)
   end
   alias_method :urlescape, :urlencode
+
+  def any?
+    not blank?
+  end
 end
 

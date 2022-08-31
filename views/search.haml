@@ -2,12 +2,13 @@
   Results for:
   %mark= params[:search]
 
+/ Normal results
 
 - @grouped_results.each do |dir, files|
 
   %h4
-    %a{href: "/#{dir.relative_name(@path)}"}
-      / ^- problemo! it's not pointing at the correct path (missing dirs[0])
+    - backlink = relative_to_root(dir)
+    %a{href: "/#{backlink}"}
       = highlight(dir.relative_name(@path), @query)
 
   %ul
@@ -17,11 +18,13 @@
       %br
 
 
+/ Offline results
+
 - if @grouped_disc_results.any?
-  %h3 Offline results (#{@grouped_disc_results.map(&:last).map(&:size).sum})
+  - count = @grouped_disc_results.map(&:last).map(&:size).sum
 
   [
-  %a{href: 'javascript: document.querySelector(".collapseable").classList.toggle("hidden")' } toggle offline results
+  %a{href: 'javascript: document.querySelector(".collapseable").classList.toggle("hidden")' } show #{count} offline results
   ]
 
   .collapseable.hidden

@@ -146,6 +146,10 @@ class MediaServer < Sinatra::Base
       "#{request.base_url}/#{"#{@fullpath.urlencode}/" if @fullpath.any?}#{path}"
     end
 
+    def relative_to_root(path)
+      path.relative_to(settings.root_dir)
+    end
+
     def xsend_file(path)
       content_type path.extname, default: 'application/octet-stream'
       headers["X-Sendfile"] = path.to_s
