@@ -31,6 +31,24 @@ class Pathname
   alias_method :exists?,  :exist?
   alias_method :dir?,     :directory?
 
+  def each_child_recursive(root=nil, &block)
+    root ||= self
+    return to_enum(:each_child_recursive, root) unless block_given?
+
+    root.each_child do |c|
+      begin
+        if c.directory?
+          each_child_recursive(c, &block)
+        else
+          yield c
+        end
+      rescue Errno::EACCES
+      end
+    end
+  end
+  alias_method :ls_R, :each_child_recursive
+  alias_method :recursive_children, :each_child_recursive
+
   def relative_name(root)
     dir = dir?
     name = relative_to(root).to_s
@@ -169,3 +187,6 @@ class Pathname
 end
 
 ###########################################################################
+if __FILE__ == $0
+  p Pathname.new("/etc").ls_R.to_a
+end
