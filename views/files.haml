@@ -1,21 +1,17 @@
--#
-  - musiciness = (@files.select(&:audio?).size / @files.size.to_f)
-  - videousity = (@files.select(&:video?).size / @files.size.to_f)
-
--#
-  - if musiciness > 0.5
-    %p
-      [
-      %a{href: "?playlist=audio-xspf"} Stream these songs as an XSPF Playlist
-      ]
-
--#
-  - if videousity > 0.5
-    %p
-      [
-      / %a{href: "?playlist=video-m3u"} Stream these videos as an M3U Playlist
-      %a{href: "?playlist=video-pls"} Stream these videos as an PLS Playlist
-      ]
+- musiciness = (@files.select(&:audio?).size / @files.size.to_f)
+- videousity = (@files.select(&:video?).size / @files.size.to_f)
+- if musiciness > 0.5
+  %p
+    [
+    %a{href: "?playlist=audio-xspf"} xspf
+    %a{href: "?playlist=audio-m3u"} m3u
+    ]
+- if videousity > 0.5
+  %p
+    [
+    %a{href: "?playlist=video-m3u"} m3u
+    %a{href: "?playlist=video-pls"} pls
+    ]
 
 - if params[:view] == "thumbs"
   / thumbnail view
