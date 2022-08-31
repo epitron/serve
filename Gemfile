@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
 gem "rack"
-gem "sinatra", ">= 2.0.0.beta2"
+#gem "sinatra", ">= 2.0.0.beta2"
+gem "sinatra"
 
 gem 'falcon'
 gem 'sendfile'

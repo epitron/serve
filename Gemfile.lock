@@ -1,101 +1,112 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.7.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.8.1)
+      public_suffix (>= 2.0.2, < 6.0)
     ansi (1.5.0)
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
-    ast (2.4.1)
-    async (1.26.2)
-      console (~> 1.0)
+    ast (2.4.2)
+    async (1.30.3)
+      console (~> 1.10)
       nio4r (~> 2.3)
       timers (~> 4.1)
-    async-container (0.16.8)
-      async (~> 1.0)
-      async-io (~> 1.26)
-    async-http (0.52.5)
-      async (~> 1.25)
-      async-io (~> 1.28)
-      async-pool (~> 0.2)
-      protocol-http (~> 0.20.0)
-      protocol-http1 (~> 0.13.0)
+    async-container (0.16.12)
+      async
+      async-io
+    async-http (0.59.2)
+      async (>= 1.25)
+      async-io (>= 1.28)
+      async-pool (>= 0.2)
+      protocol-http (~> 0.23.1)
+      protocol-http1 (~> 0.14.0)
       protocol-http2 (~> 0.14.0)
-    async-http-cache (0.2.0)
-      async-http (~> 0.51)
-    async-io (1.30.1)
-      async (~> 1.14)
-    async-pool (0.3.2)
-      async (~> 1.25)
+      traces (>= 0.4.0)
+    async-http-cache (0.4.3)
+      async-http (~> 0.56)
+    async-io (1.34.0)
+      async
+    async-pool (0.3.12)
+      async (>= 1.25)
     build-environment (1.13.0)
-    console (1.9.0)
-    epitools (0.5.129)
+    console (1.15.3)
+      fiber-local
+    epitools (0.5.134)
     epub-cfi (0.1.2)
-    epub-parser (0.4.5)
+    epub-parser (0.4.6)
       addressable (>= 2.3.5)
       archive-zip
       epub-cfi
       rchardet (>= 1.6.1)
-    falcon (0.36.6)
-      async (~> 1.13)
+      rexml
+    falcon (0.42.3)
+      async
       async-container (~> 0.16.0)
-      async-http (~> 0.52.0)
-      async-http-cache (~> 0.2.0)
+      async-http (~> 0.57)
+      async-http-cache (~> 0.4.0)
       async-io (~> 1.22)
       build-environment (~> 1.13)
       bundler
       localhost (~> 1.1)
+      openssl (~> 3.0)
       process-metrics (~> 0.2.0)
-      rack (>= 1.0)
+      protocol-rack (~> 0.1)
       samovar (~> 2.1)
-    haml (5.1.2)
+    fiber-local (1.0.0)
+    haml (5.2.2)
       temple (>= 0.8.0)
       tilt
     io-like (0.3.1)
     io_splice (4.4.2)
-    localhost (1.1.6)
+    localhost (1.1.9)
     mapping (1.1.1)
-    mustermann (1.1.1)
+    mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
-    nio4r (2.5.4)
-    oga (3.3)
+    nio4r (2.5.8)
+    oga (3.4)
       ast
       ruby-ll (~> 2.1)
-    pandoc-ruby (2.1.4)
+    openssl (3.0.0)
+    pandoc-ruby (2.1.6)
     process-metrics (0.2.1)
       console (~> 1.8)
       samovar (~> 2.1)
     protocol-hpack (1.4.2)
-    protocol-http (0.20.1)
-    protocol-http1 (0.13.1)
-      protocol-http (~> 0.19)
-    protocol-http2 (0.14.1)
+    protocol-http (0.23.12)
+    protocol-http1 (0.14.6)
+      protocol-http (~> 0.22)
+    protocol-http2 (0.14.2)
       protocol-hpack (~> 1.4)
       protocol-http (~> 0.18)
-    public_suffix (4.0.6)
-    rack (2.2.3)
-    rack-protection (2.1.0)
+    protocol-rack (0.2.3)
+      protocol-http (~> 0.23)
+      rack (>= 1.0)
+    public_suffix (5.0.0)
+    rack (2.2.4)
+    rack-protection (2.2.2)
       rack
     rchardet (1.8.0)
+    rexml (3.2.5)
     ruby-ll (2.1.2)
       ansi
       ast
-    ruby2_keywords (0.0.2)
+    ruby2_keywords (0.0.5)
     samovar (2.1.4)
       console (~> 1.0)
       mapping (~> 1.0)
     sendfile (1.2.2)
-    sinatra (2.1.0)
-      mustermann (~> 1.0)
+    sinatra (2.2.2)
+      mustermann (~> 2.0)
       rack (~> 2.2)
-      rack-protection (= 2.1.0)
+      rack-protection (= 2.2.2)
       tilt (~> 2.0)
     temple (0.8.2)
-    tilt (2.0.10)
-    timers (4.3.2)
+    tilt (2.0.11)
+    timers (4.3.3)
+    traces (0.6.1)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   epitools
@@ -107,7 +118,7 @@ DEPENDENCIES
   pandoc-ruby
   rack
   sendfile
-  sinatra (>= 2.0.0.beta2)
+  sinatra
 
 BUNDLED WITH
-   2.1.4
+   2.3.19
