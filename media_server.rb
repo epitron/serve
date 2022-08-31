@@ -40,6 +40,33 @@ require 'epub_loader'
 
 ###########################################################################
 
+class Discs
+
+  class DiscResult < Struct.new(:disc, :date, :size, :name)
+    def self.from_line(disc, line)
+      date, size, name = line.chomp.split(/\s+\|\s+/)
+      time = DateTime.parse(date).to_time
+      new disc, time, size.to_i, name
+    end
+  end
+
+  def self.search(regexp)
+    files = Pathname.glob("#{ENV["HOME"]}/archive/discs/*.txt")
+    results = files.map do |file|
+
+      disc = file.name
+      matches = file.each_line.
+        map { |line| DiscResult.from_line(disc, line) }.
+        select { |result| result.name[regexp] }
+
+      [disc, matches]
+    end.reject { |path, results| results.empty? }
+  end
+
+end
+
+###########################################################################
+
 class MediaServer < Sinatra::Base
 
   # Defaults
@@ -82,8 +109,10 @@ class MediaServer < Sinatra::Base
   set :root_dir,   Pathname.new(public_dir).expand_path
   # set :public_folder, nil
 
-  mime_type :mkv, 'video/x-matroska'
-  mime_type :nfo, 'text/plain; charset=IBM437'
+  mime_type :mkv,  'video/x-matroska'
+  mime_type :nfo,  'text/plain; charset=IBM437'
+  mime_type :webp, 'image/webp'
+
   # disable :sessions
 
   # puts %q{
@@ -219,9 +248,11 @@ class MediaServer < Sinatra::Base
     end
 
     ext = File.extname(file)
-
     content_type(ext.blank? ? "application/octet-stream" : ext)
-    IO.popen(["ipfs", "cat", "#{ipfs_id}/#{file}"], &:read)
+    # ipfs cat /ipfs/<not a file> => Error: this dag node is a directory
+    result = IO.popen(["ipfs", "cat", "#{ipfs_id}/#{file}"], err: [:child, :out], &:read)
+    result = IO.popen(["ipfs", "cat", "#{ipfs_id}"], err: [:child, :out], &:read) if not $?.success?
+    result
   end
 
   get '/*' do |path|
@@ -313,18 +344,28 @@ class MediaServer < Sinatra::Base
     #
     if params[:playlist] == "audio-xspf"
       # PLAY DIRECTORY AS XSPF PLAYLIST
-      @tracks = @path.each_child.select(&:audio?)
+      @tracks = @path.ls_R.select(&:audio?)
 
       attachment("listen.xspf", "inline")
       content_type(".xspf")
-      haml "audio-xspf", layout: false
+      haml :"audio-xspf", layout: false
+
+    elsif params[:playlist] == "audio-m3u"
+      # PLAY DIRECTORY AS M3U PLAYLIST
+      @tracks = @path.ls_R.select(&:audio?)
+
+      attachment("listen.m3u", "inline")
+      content_type(".m3u")
+      @path.ls_R.select(&:audio?).map do |path|
+        url_for(path.basename.to_s.urlencode)
+      end.join("\n")
 
     elsif params[:playlist] == "video-m3u"
 
       attachment("watch.m3u", "inline")
       content_type(".m3u")
 
-      @path.each_child.select(&:video?).map do |path|
+      @path.ls_R.select(&:video?).map do |path|
         url_for(path.basename.to_s.urlencode)
       end.join("\n")
 
@@ -336,7 +377,7 @@ class MediaServer < Sinatra::Base
       out = []
       out << "[playlist]"
 
-      @vidz = @path.each_child.select(&:video?)
+      @vidz = @path.ls_R.select(&:video?)
 
       @vidz.each_with_index do |path, n|
         out << "Title#{n+1}=#{path.basename}"
@@ -380,8 +421,8 @@ class MediaServer < Sinatra::Base
         file if rel.to_s =~ @query
       end.compact
 
-      # Group by dirs
-      @grouped = @matches.group_by { |file| file.dirname }
+      @grouped_results = @matches.group_by { |file| file.dirname }
+      @grouped_disc_results = Discs.search(@query)
 
       haml :search
 

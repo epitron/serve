@@ -1,4 +1,5 @@
-body { background-color: #04042F; color: #aaaaaa; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; }
+body { background-color: #04042F; color: #aaaaaa; font-family: Verdana, Arial, Helvetica, sans; }
+blockquote { color: #aaccaa; }
 
 /* Link Formatting */
 a { text-decoration: none; }        /* remove default underline from link */
@@ -44,3 +45,6 @@ thead a:hover { color: #eee; }
 dt { font-weight: bold; }
 dd { margin-bottom: 5px; }
 pre { margin: 0; }
+
+
+.hidden { display: none; }
