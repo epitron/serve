@@ -8,6 +8,9 @@
       #{@root_dir_name} / #{@fullpath}
 
     %link{href: "/css/main.css", rel: "stylesheet", type: "text/css"}
+    :css
+      .book { color: #C8D8B9; margin-left: 5%; margin-right: 5%; }
+      img { max-width: 95%; }
 
   %body
     %h2
@@ -23,5 +26,6 @@
       %input{type: "hidden", name: "throbber", value: "true"}
       / %input{type: "submit"}
 
-    = markdown(@path.read)
+    .book
+      = markdown(@path.read)
 
