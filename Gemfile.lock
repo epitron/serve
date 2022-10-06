@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.7.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.8.1)
+      public_suffix (>= 2.0.2, < 6.0)
     ansi (1.5.0)
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
@@ -72,7 +72,7 @@ GEM
     protocol-http2 (0.14.1)
       protocol-hpack (~> 1.4)
       protocol-http (~> 0.18)
-    public_suffix (4.0.6)
+    public_suffix (5.0.0)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
