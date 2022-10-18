@@ -2,6 +2,9 @@
 ###########################################################################
 #
 # TODO:
+# - "/music/Directory.m3u" => "/music/Directory/?playlist=audio-m3u"
+# - sort files in .m3u/.xspf
+# - mixed video/audio playlists? (maybe "Dir.m3u?include=audio" or "?inculde=video" to only include that one media type)
 # - Persistent directory sort-order (cookie-based)
 #
 ###########################################################################
@@ -110,6 +113,7 @@ class MediaServer < Sinatra::Base
   # set :public_folder, nil
 
   mime_type :mkv,  'video/x-matroska'
+  mime_type :m4a,  'audio/mp4'
   mime_type :nfo,  'text/plain; charset=IBM437'
   mime_type :webp, 'image/webp'
 
@@ -176,7 +180,7 @@ class MediaServer < Sinatra::Base
 
   def send_the_file(path)
     # xsend_file(path)
-    puts "[sending] #{path}"
+    $stderr.puts "[sending] #{path}"
     send_file(path.open)
   end
 
@@ -267,7 +271,7 @@ class MediaServer < Sinatra::Base
     @fullpath      = "" if @fullpath == "."
 
     # puts "[requested] #{@path}"
-    puts "[requested] #{request.fullpath}"
+    $stderr.puts "[requested] #{request.fullpath}"
 
     unless @path.exists?
       unless OPTIONAL_EXTS.any? { |ext| testpath = @path.sub_ext(ext); testpath.exist? ? @path = testpath : false }
