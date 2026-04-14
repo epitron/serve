@@ -12,24 +12,15 @@ class Pathname
     [/\.(jpe?g|gif|png|webp)$/i                              , "image"],
     [/\.(mp3|ogg|m4a|aac|flac)$/i                            , "audio"],
   ]
-  # TYPES = Rash.new(
-  #   /\.(avi|ogm|webm|mp4|m4v|mkv|mj?pe?g|flv|f4v|mov|wmv)$/i => "video",
-  #   /(^README|\.(pdf|doc|txt|srt|sub|nfo)$)/i                => "doc",
-  #   /\.(jpe?g|gif|png|webp)$/i                               => "image",
-  #   /\.(mp3|ogg|m4a|aac|flac)$/i                             => "audio",
-  # )
-
-  def file_type
-    return "directory" if directory?
-    result = TYPES.find { |re, t| re.match(to_s) }
-    result && result.last
-  end
 
   alias_method :relative_to, :relative_path_from
 
   alias_method :ls,       :children
   alias_method :exists?,  :exist?
   alias_method :dir?,     :directory?
+  alias_method :ext,      :extname
+
+  #---------------------------------------------------------------------------------#
 
   def each_child_recursive(root=nil, &block)
     root ||= self
@@ -64,7 +55,16 @@ class Pathname
   end
 
   def name_without_ext
-    extname.blank? ? name : name.gsub(/#{Regexp.escape extname}$/, '')
+    # extname.blank? ? name : name.gsub(/#{Regexp.escape extname}$/, '')
+    ext.blank? ? name : name.chomp(ext)
+  end
+
+  #---------------------------------------------------------------------------------#
+
+  def file_type
+    return "directory" if directory?
+    result = TYPES.find { |re, t| re.match(to_s) }
+    result && result.last
   end
 
   def type
@@ -77,15 +77,7 @@ class Pathname
   def image?; type == "image"; end
   def media?; %w[audio video doc image].include? type; end
 
-  def icon
-    if dir?
-      "/img/dir.gif"
-    else
-      "/img/#{type}.gif"
-    end
-  end
-
-
+  #---------------------------------------------------------------------------------#
 
   SORT_METHOD = {
     "date" => :cmp_date,
@@ -115,6 +107,7 @@ class Pathname
     [dir? ? 0 : 1, to_s.downcase]
   end
 
+  #---------------------------------------------------------------------------------#
 
   #
   # Read xattrs from file (requires "getfattr" to be in the path)
@@ -144,9 +137,19 @@ class Pathname
     attrs
   end
 
+  #---------------------------------------------------------------------------------#
+
   def local_uri
     # RFC2396
     "file://#{expand_path}".gsub(" ", "%20")
+  end
+
+  def icon
+    if dir?
+      "/img/dir.gif"
+    else
+      "/img/#{type}.gif"
+    end
   end
 
   THUMBDIR = Pathname.new("~/.cache/thumbnails/large/").expand_path

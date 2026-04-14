@@ -39,7 +39,7 @@ def moin2markdown(moin)
     gsub(/^(={1,5}) (.+) =+$/) { |m| ("#" * $1.size ) + " " + $2 }. # headers
     gsub(/'''/, "__").                            # bolds
     gsub(/''/, "_").                              # italics
-    gsub(/\{\{(?:attachment:)?(.+)\}\}/, "![](/_attachments/\\1)").  # images
+    gsub(/\{\{(?:attachment:)?(.+)\}\}/, "![](/wiki/_attachments/\\1)").  # images
     gsub(/\[\[(.+?)\|(.+?)\]\]/, "[\\2](\\1)").     # links w/ desc
     gsub(/\[\[(.+)\]\]/, "[\\1](\\1)").           # links w/o desc
     gsub(/^#acl .+$/, '').                        # remove ACLs
