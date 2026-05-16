@@ -9,12 +9,12 @@
   %h4
     - backlink = relative_to_root(dir)
     %a{href: "/#{backlink}"}
-      = highlight(dir.relative_name(@path), @query)
+      != highlight(dir.relative_name(@path), @query)
 
   %ul
     - files.each do |file|
       %a{href: "/#{file.relative_name(settings.root_dir)}"}
-        = highlight(file.relative_name(dir), @query)
+        != highlight(file.relative_name(dir), @query)
       %br
 
 
@@ -39,7 +39,7 @@
 
             / NAME
             %td{style: "min-width:100px"}
-              = highlight(result.name, @query)
+              != highlight(result.name, @query)
 
             / SIZE
             %td{nowrap: true, align: 'right'}
