@@ -285,6 +285,7 @@ class MediaServer < Sinatra::Base
     # Serve a file
     #
     unless @path.directory?
+      return send_the_file @path if params[:dl]
       return \
         case @path.extname
         when ".haml"
