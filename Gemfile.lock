@@ -38,11 +38,12 @@ GEM
       console (~> 1.0)
     base64 (0.3.0)
     bigdecimal (4.1.1)
+    coderay (1.1.3)
     console (1.34.3)
       fiber-annotation
       fiber-local (~> 1.1)
       json
-    epitools (0.5.136)
+    epitools (0.5.137)
     epub-cfi (0.1.4)
       racc
     epub-parser (0.5.0)
@@ -73,6 +74,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
+    io-console (0.9.3)
     io-endpoint (0.17.2)
     io-event (1.15.1)
     io-like (0.4.0)
@@ -82,6 +84,7 @@ GEM
     localhost (1.7.0)
     logger (1.7.0)
     mapping (1.1.3)
+    method_source (1.1.0)
     metrics (0.15.0)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
@@ -89,7 +92,6 @@ GEM
       ast
       ruby-ll (~> 2.1)
     openssl (4.0.1)
-    pandoc-ruby (2.1.10)
     prime (0.1.4)
       forwardable
       singleton
@@ -105,6 +107,10 @@ GEM
       protocol-http (~> 0.58)
       rack (>= 1.0)
     protocol-url (0.4.0)
+    pry (0.16.0)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+      reline (>= 0.6.0)
     public_suffix (7.0.5)
     racc (1.8.1)
     rack (3.2.6)
@@ -117,11 +123,14 @@ GEM
       rack (>= 3.0.0)
     rake (13.3.1)
     rchardet (1.10.0)
+    reline (0.7.0)
+      io-console (~> 0.5)
     rexml (3.4.4)
     ruby-ll (2.1.4)
       ansi
       ast
     ruby2_keywords (0.0.5)
+    ruzip (0.2.1)
     samovar (2.4.1)
       console (~> 1.0)
       mapping (~> 1.0)
@@ -152,10 +161,11 @@ DEPENDENCIES
   haml
   io_splice
   oga
-  pandoc-ruby
   prime
+  pry
   rack
   rake
+  ruzip (>= 0.2.1)
   sendfile
   sinatra
 
@@ -173,8 +183,9 @@ CHECKSUMS
   async-utilization (0.3.2) sha256=201a27e0948fe23fc14a01a0ecbe5e420e27cebae3a51f36e56fc45fb31df3b4
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bigdecimal (4.1.1) sha256=1c09efab961da45203c8316b0cdaec0ff391dfadb952dd459584b63ebf8054ca
+  coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   console (1.34.3) sha256=869fbd74697efc4c606f102d2812b0b008e4e7fd738a91c591e8577140ec0dcc
-  epitools (0.5.136) sha256=c5d4a9fea2918d1d716838a5b1e55bcedc844ef112df2d52c41c4e6dcc7e7374
+  epitools (0.5.137) sha256=65bd8b4d6691e01f938b7baf8af8eb0a1835d56cc723cb2ec511e6dde5a91fdc
   epub-cfi (0.1.4) sha256=9e1eb749ec71279f03e78c9a4d723e751857c023bebc1273ef85f0ccdd76205a
   epub-parser (0.5.0) sha256=a2009d5037408908ffdccf7d39adcad12ca91e296043e30fb86146ead9696e33
   falcon (0.55.2) sha256=dfcdd8e4c3a18827a5ca7e346df67ebdaf873ac61a5f7d20ad4923c4d6b180cb
@@ -183,6 +194,7 @@ CHECKSUMS
   fiber-storage (1.0.1) sha256=f48e5b6d8b0be96dac486332b55cee82240057065dc761c1ea692b2e719240e1
   forwardable (1.4.0) sha256=f1cd40cc9812937980e1c76f1aa053660990a7c9b6a98fc37d945468afcce838
   haml (7.2.0) sha256=87fd2b71f7feab1724337b090a7d767f5ab2d42f08c974f3ead673f18cfcd55a
+  io-console (0.9.3) sha256=f555049461b0afb78a5448b5be8e7c7b48371347cd48abfc22814764160000dd
   io-endpoint (0.17.2) sha256=3feaf766c116b35839c11fac68b6aaadc47887bb488902a57bf8e1d288fb3338
   io-event (1.15.1) sha256=c644cdcf48254015d63f558bf4492f35471f5bb204a42180ea49752be59b30cc
   io-like (0.4.0) sha256=808994312907b3d59c548e75215183ccd950e63101ad08800c4df4188a2a0211
@@ -192,11 +204,11 @@ CHECKSUMS
   localhost (1.7.0) sha256=09b32819537f914ccdf0a7c595fab162517401b6ef644a2afd3708d943c4547f
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mapping (1.1.3) sha256=2274931d20ecd46eaafdd1e00c58cc7472133b213bcac335cc7733d3c75f4da2
+  method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
   metrics (0.15.0) sha256=61ded5bac95118e995b1bc9ed4a5f19bc9814928a312a85b200abbdac9039072
   mustermann (3.0.4) sha256=85fadcb6b3c6493a8b511b42426f904b7f27b282835502233dd154daab13aa22
   oga (3.4) sha256=953039cd7be8dc50dfdafe052588e369c707ff1a82e06980b90944e1a1061b6d
   openssl (4.0.1) sha256=e27974136b7b02894a1bce46c5397ee889afafe704a839446b54dc81cb9c5f7d
-  pandoc-ruby (2.1.10) sha256=37653d6b5e71657fb25b3cb230e6eebbfb8c925c7f1fcf69dfb6b929d12b74b2
   prime (0.1.4) sha256=4d755ebf7c2994a6f3a3fee0d072063be3fff2d4042ebff6cd5eebd4747a225e
   protocol-hpack (1.5.1) sha256=6feca238b8078da1cd295677d6f306c6001af92d75fe0643d33e6956cbc3ad91
   protocol-http (0.60.0) sha256=ca1354947676d663b6f23c49654aee464288774e7867c4a6e406fecce9691cec
@@ -204,6 +216,7 @@ CHECKSUMS
   protocol-http2 (0.24.0) sha256=65327a019b7e36d2774e94050bf57a43bb60212775d2fcf02ae1d2ed4f01ef28
   protocol-rack (0.22.1) sha256=1185d245927ef9849a603700d6991ca353bc89724fbf98efa4a4333ed62a9fc3
   protocol-url (0.4.0) sha256=64d4c03b6b51ad815ac6fdaf77a1d91e5baf9220d26becb846c5459dacdea9e1
+  pry (0.16.0) sha256=d76c69065698ed1f85e717bd33d7942c38a50868f6b0673c636192b3d1b6054e
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
   rack (3.2.6) sha256=5ed78e1f73b2e25679bec7d45ee2d4483cc4146eb1be0264fc4d94cb5ef212c2
@@ -211,9 +224,11 @@ CHECKSUMS
   rack-session (2.1.2) sha256=595434f8c0c3473ae7d7ac56ecda6cc6dfd9d37c0b2b5255330aa1576967ffe8
   rake (13.3.1) sha256=8c9e89d09f66a26a01264e7e3480ec0607f0c497a861ef16063604b1b08eb19c
   rchardet (1.10.0) sha256=d5ea2ed61a720a220f1914778208e718a0c7ed2a484b6d357ba695aa7001390f
+  reline (0.7.0) sha256=5b012d8e55dbf9d450f12bde2cf7d15ff546ae80b3f8f3b30e570d431815583d
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
   ruby-ll (2.1.4) sha256=bec3a40078e4b8578b20751f0b2e3dc3fcaa773e34fae3d9725b724032e47e0c
   ruby2_keywords (0.0.5) sha256=ffd13740c573b7301cf7a2e61fc857b2a8e3d3aff32545d6f8300d8bae10e3ef
+  ruzip (0.2.1) sha256=07d1d9c207d823262767e01fb0a0dc3d26d04fb278af833973d23c1fd0ad391f
   samovar (2.4.1) sha256=c3b91dd0580771e3bc600621c1111f29542529dcffafaac3b6bf068b3f309e80
   sendfile (1.2.2) sha256=facf30664468af5d6f564a48fc0c2a2267765f4fcc4d5a22ba42b93d9333a000
   sinatra (4.2.1) sha256=b7aeb9b11d046b552972ade834f1f9be98b185fa8444480688e3627625377080

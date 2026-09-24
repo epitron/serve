@@ -13,9 +13,10 @@ gem 'prime'
 
 gem "haml"
 gem "oga"
-
-gem "pandoc-ruby"
 gem "epub-parser"
+gem 'ruzip', ">= 0.2.1"
 
 gem "epitools"
 gem 'bigdecimal'
+
+gem 'pry'

@@ -1,6 +1,9 @@
-require 'epub/parser'
-require 'oga'
 require 'cgi'
+require 'oga'
+require 'ruzip'
+require 'epub/parser'
+require 'epub/ocf/physical_container/ruzip'
+EPUB::OCF::PhysicalContainer.adapter = EPUB::OCF::PhysicalContainer::RuZip
 
 class EPUBLoader
 
